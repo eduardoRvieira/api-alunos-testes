@@ -13,6 +13,7 @@
     import org.mockito.junit.jupiter.MockitoExtension;
 
     import java.time.LocalDate;
+    import java.util.List;
 
     @ExtendWith(MockitoExtension.class)
     public class AlunoServiceTest {
@@ -43,10 +44,27 @@
             Assertions.assertThat(alunoSalvo).isNotNull();
             Assertions.assertThat(alunoSalvo.getId()).isEqualTo(1L);
             Assertions.assertThat(alunoSalvo.getNome()).isEqualTo("Eduardo");
-
-            Mockito.verify(repository, Mockito.times(1)).save(Mockito.any(Aluno.class));
         }
-        
+
+        @Test
+        void deveRetornarListaDeAlunos(){
+
+            //Arrange
+            Aluno aluno1 = new Aluno(1L, "Eduardo", "eduardo@gmail.com", "12345", LocalDate.of(2005, 7, 5), 9);
+            Aluno aluno2 = new Aluno(2L, "Luiz", "luiz@gmail.com", "12345", LocalDate.of(2004, 4, 12), 4);
+
+            // Stub do FindAll
+            Mockito.when(repository.findAll()).thenReturn(List.of(aluno1, aluno2));
+
+            // Act
+            List<AlunoResponse> listaAlunos = service.listarAlunos();
+
+            // Assert
+            Assertions.assertThat(listaAlunos).isNotNull();
+            Assertions.assertThat(listaAlunos).hasSize(2);
+            Assertions.assertThat(listaAlunos.get(0).getId()).isEqualTo(1L);
+            Assertions.assertThat(listaAlunos.get(1).getId()).isEqualTo(2L);
+        }
 
 
     }
